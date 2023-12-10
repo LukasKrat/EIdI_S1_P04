@@ -47,7 +47,7 @@ void getTitel(char output[]){
     puts("Bitte geben sie den Titel des Termins ein, maximal 20 zeichen");
     char titelToGet[20];
     //char titelToGet = (char) malloc(sizeof(char) * 20);
-    scanf("%c", &output);
+    scanf("%s", &output[0]);
     /*
     if(sizeof(titelToGet) > 20){
         puts("der Titel geht zu lange.");
@@ -71,9 +71,9 @@ void stringcpy(char output[], char input[], int inputLength) {
     }
 }
 
-int resizeArray(struct Termin *ptr, int elementsToAddCnt, int currentElementsCnt, struct Termin appointments[1]) {
+int resizeArray(struct Termin *ptr[], int elementsToAddCnt, int currentElementsCnt, struct Termin appointments[]) {
     if (currentElementsCnt == 0) {
-        ptr = appointments;
+        ptr[0] = appointments;
     }
     else {
         realloc(ptr, (sizeof(termin *)*currentElementsCnt + elementsToAddCnt));
@@ -133,7 +133,7 @@ void kalenderAusgabe(){
 
 int main(void) {
     //maximale anzahl appointments per malloc
-    struct Termin *appointmentsPtr = NULL;
+    struct Termin *appointmentsPtr[1];
     //struct Termin appointments[MAX_APPOINTMENTS];
 
     int countAppointments = 0, userInputMainMenu;
@@ -146,12 +146,13 @@ int main(void) {
                 //appointments(countAppointments) = termintest;
                 //termintest.startdatum = toScan();
 
-                struct Termin *appointments = (struct Termin *) malloc(1 * sizeof(struct Termin ));
+                //struct Termin *appointments = (struct Termin *) malloc(1 * sizeof(struct Termin ));
+                struct Termin appointments[2];
                 countAppointments = resizeArray(appointmentsPtr, 1, countAppointments, appointments);
-                (appointmentsPtr+(countAppointments-1))->dauer = getDauer();
+                (appointmentsPtr+(countAppointments-1))[0]->dauer = getDauer();
                 char title[20];
                 getTitel(title);
-                stringcpy(appointmentsPtr[countAppointments-1].titel, title, 20);
+                stringcpy(appointmentsPtr[countAppointments-1][0].titel, title, 20);
                 countAppointments = countAppointments +1;
 
             }break;
