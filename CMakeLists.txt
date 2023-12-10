@@ -3,4 +3,7 @@ project(EidI_P4 C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(EidI_P4 main.c)
+add_executable(EidI_P4 main.c
+        myDateFunctions.c
+        myDateFunctions.h
+        appointment.c)

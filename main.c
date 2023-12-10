@@ -4,7 +4,8 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
-
+#include "appointment.h"
+#include "myDateFunctions.h"
 
 /// clears the input of the console
 void clearInput() {
@@ -42,15 +43,18 @@ int getDauer(){
     }else return dauerToGet;
 }
 
-char getTitel(){
+void getTitel(char output[]){
     puts("Bitte geben sie den Titel des Termins ein, maximal 20 zeichen");
     char titelToGet[20];
-    scanf("%c", &titelToGet);
-    if(titelToGet > 20){
+    //char titelToGet = (char) malloc(sizeof(char) * 20);
+    scanf("%c", &output);
+    /*
+    if(sizeof(titelToGet) > 20){
         puts("der Titel geht zu lange.");
-        return 0;
-    }else return titelToGet[];
-
+        return;
+    }
+    */
+    //output = titelToGet;
 }
 
 /*
@@ -67,16 +71,70 @@ void stringcpy(char output[], char input[], int inputLength) {
     }
 }
 
-int main(void) {
-    struct Termin{
-        struct tm startdatum;
-        //maximal 8 stunden
-        int dauer;
-        char titel[20];
-    }termintest;
+int resizeArray(struct Termin *ptr, int elementsToAddCnt, int currentElementsCnt, struct Termin appointments[1]) {
+    if (currentElementsCnt == 0) {
+        ptr = appointments;
+    }
+    else {
+        realloc(ptr, (sizeof(termin *)*currentElementsCnt + elementsToAddCnt));
+    }
 
+    return currentElementsCnt + elementsToAddCnt;
+}
+
+
+/*
+///terminausgabe via 2 schleifen, druckt titel, dauer und startdatum aus
+void terminAusgabe(*appointmentsPtr, int countAppointments){
+    int aussendurchlauf = 0;
+    int appointmentArrayEnde = countAppointments;
+
+    //erste schleife, durchläuft alle pointer auf die einzelnen terminserien
+    for(aussendurchlauf; aussendurchlauf < appointmentArrayEnde; aussendurchlauf++){
+
+        int innendurchlauf = 0;
+        //innere schleife, durchläuft die jeweiligen terminserien und gibt
+        // termintitel, dauer, und startdatum aus
+        for(innendurchlauf; innendurchlauf < sizeof(*appointmentsPtr); innendurchlauf++){
+             printf("Termintitel: %c .", *appointmentsPtr.Titel);
+             printf("Termindauer: %d sekunden .", *appointmentsPtr.Dauer);
+             asctime(*appointmentsPtr);
+        }
+
+        printf("\n");
+    }
+}
+*/
+
+
+///fordere den benutzer auf eine woche einzugeben fuer die die
+/// termine als kalender ausgegeben werden sollen
+void getWeek(){
+    puts("Bitte geben sie die woche ein die sie ausgeben wollen");
+    //erstelle ein tm struct mit eingaben für jahr, monat und tag und wochentag
+    //verschiebe sodass unser eingegebener tag montag ist (tm_mday - tm_wday +1)
+
+}
+
+
+//
+void kalenderAusgabe(){
+    //struct tm startpunkt = getWeek();
+
+    //-> wieder 2 schleifen für alle werte
+    //sortiert nach startzeit, aka stunden und minuten
+
+    //drucke einen wert für montag, dann dienstag.... bis sonntag
+    //mache eine neue zeile und wiederhole bis alle gedruckt
+
+}
+
+
+
+int main(void) {
     //maximale anzahl appointments per malloc
-    struct Termin appointments[MAX_APPOINTMENTS];
+    struct Termin *appointmentsPtr = NULL;
+    //struct Termin appointments[MAX_APPOINTMENTS];
 
     int countAppointments = 0, userInputMainMenu;
 
@@ -85,10 +143,15 @@ int main(void) {
         switch (userInputMainMenu) {
             case 1: {
                 //Termin anlegen
-                appointments(countAppointments) = termintest;
+                //appointments(countAppointments) = termintest;
                 //termintest.startdatum = toScan();
-                termintest.dauer = getDauer();
-                stringcpy(termintest.titel, getTitel(), 20);
+
+                struct Termin *appointments = (struct Termin *) malloc(1 * sizeof(struct Termin ));
+                countAppointments = resizeArray(appointmentsPtr, 1, countAppointments, appointments);
+                (appointmentsPtr+(countAppointments-1))->dauer = getDauer();
+                char title[20];
+                getTitel(title);
+                stringcpy(appointmentsPtr[countAppointments-1].titel, title, 20);
                 countAppointments = countAppointments +1;
 
             }break;
