@@ -52,10 +52,14 @@ char getTitel(){
     }else return titelToGet[];
 
 }
-void erstelleTermin(int anzahl){
+
+/*
+ void erstelleTermin(int anzahl){
     getDauer();
     getTitel();
+
 }
+ */
 
 void stringcpy(char output[], char input[], int inputLength) {
     for (int i = 0; i < inputLength; i++) {
@@ -91,7 +95,9 @@ int main(void) {
             case 2: {
                 //Terminserie anlegen
                 //braucht countappointments + 1 für speicheradresse auf terminserie
-                //braucht realloc speicherplatz für anzahl der zu speichernden termine * größe des termin structs
+
+                //braucht realloc speicherplatz für anzahl der zu speichernden
+                // termine * größe des termin structs
             }break;
             case 3: {
                 //Termin löschen
@@ -99,7 +105,14 @@ int main(void) {
             }break;
             case 4: {
                 //Alle Termine anzeigen
-                //ausgabe via 2 sc
+                //ausgabe via 2 verlinkter schleifen
+                //äußere läuft über das pointer-array von
+                // appointments wo die terminserien drinstehen (bis appointmentcount)
+
+                //innere schleife läuft über termine (1 element) oder terminserien (bis länge)
+                //und gibt das Termin-Struct aus
+
+                //terminAusgabe(*appointmentsPtr, countAppointments);
             }break;
             case 5: {
                 //nächsten Termin anzeigen
