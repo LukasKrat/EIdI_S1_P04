@@ -300,14 +300,16 @@ int main(void) {
                 for (int i = 0; i < numberOfAppointmentsForSeries; i++)
                 {
                     //printf("%d.%d", series[i].startdatum.tm_mon, series[i].startdatum.tm_mday);
-                    printf("Year: %d\n", (*(appointmentsPtr+(countAppointments-1))).startdatum.tm_year);
                     // Assign content of "series" to main-appointments-array;
                     //tptr[(countAppointments-numberOfAppointmentsForSeries)*sizeof(struct Termin)].startdatum = series[i].startdatum;         
-                    (*(appointmentsPtr+(countAppointments-1))).startdatum = series[i].startdatum;
+                    (*(tptr+(countAppointments-numberOfAppointmentsForSeries-1)+i)).startdatum = series[i].startdatum;
                     //appointmentsPtr[countAppointments-numberOfAppointmentsForSeries].dauer = dauer;
-                    //stringcpy(appointmentsPtr[countAppointments-numberOfAppointmentsForSeries+i].titel, title,20);
+                    
+                    printf("Year: %d\n", (*(appointmentsPtr+(countAppointments-numberOfAppointmentsForSeries-1)+i)).startdatum.tm_year);
+                    
+                    stringcpy((*(tptr+(countAppointments-numberOfAppointmentsForSeries-1)+i)).titel, title,20);
 
-                    *(appointmentsPtr + sizeof(struct Termin));
+                    //*(appointmentsPtr + sizeof(struct Termin));
                     //printf("%d.%d", appointmentsPtr[countAppointments-numberOfAppointmentsForSeries].startdatum.tm_mon, appointmentsPtr[countAppointments-numberOfAppointmentsForSeries].startdatum.tm_mday);
                 }
                 
@@ -328,13 +330,13 @@ int main(void) {
                 //innere schleife läuft über termine (1 element) oder terminserien (bis länge)
                 //und gibt das Termin-Struct aus
                 for (int i = 0; i < countAppointments; i++) {
-                    struct Termin sapp = *(appointmentsPtr+(i*sizeof(struct Termin)));
-                    printf("Print|%d-%d-%d",(sapp).startdatum.tm_year, (sapp).startdatum.tm_mon,(sapp).startdatum.tm_mday);
+                    struct Termin sapp = (*(appointmentsPtr+i));
+                    printf("Print|%d-%d-%d\n",sapp.startdatum.tm_year, sapp.startdatum.tm_mon,sapp.startdatum.tm_mday);
                     char dateTime[80] = "";
                     time_t time = mktime(&(sapp.startdatum));
                     strftime(dateTime, 80,"%x",localtime(&time));
-                    printf("%80s\n",dateTime);
-                    printf("%20s\n",(sapp).titel);
+                    //printf("%80s\n",dateTime);
+                    //printf("%20s\n",(sapp).titel);
                     printf("Datum: %80s, Titel: %20s, Dauer: %d Minuten\n", dateTime, sapp.titel, sapp.dauer);
                 }
                 //terminAusgabe(*appointmentsPtr, countAppointments);
