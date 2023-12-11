@@ -7,6 +7,10 @@
 #include "appointment.h"
 #include "myDateFunctions.h"
 
+#define DAILY 1
+#define WEEKLY 2
+#define TWEEKLY 3
+
 /// clears the input of the console
 void clearInput() {
 #if WIN32 || WIN64
@@ -14,6 +18,27 @@ void clearInput() {
 #else
     getchar();
 #endif
+}
+
+void toScan(int *mins1, int *hours1, int *day1, int *month1, int *years1, struct tm *Datum1) {
+    puts("Den Tag:");
+
+    scanf("%d", day1);
+
+    puts("Den Monat:");
+    scanf("%d", month1);
+
+    puts("Das Jahr:");
+    scanf("%d", years1);
+    (*years1) -= 1900;
+
+    puts("Die Stunde:");
+    scanf("%d", hours1);
+
+    puts("Die Minute:");
+    scanf("%d", mins1);
+
+    (*Datum1) = (struct tm){0, (*mins1) , (*hours1), (*day1), (*month1), (*years1), 0, 0, 0};
 }
 
 /// Fordert den Benutzer auf eine Option
@@ -124,6 +149,62 @@ void kalenderAusgabe(){
 
 }
 
+/// @brief Creates a series if appointments.
+/// @param input The input-parameters (start-date in UTC, interval-mode, number of appointments).
+/// @param output The array to which the result should be written.
+void createAppointmentsSeries(struct tm input, struct Termin output[], int modeIndex, int appc)
+{
+    int year = input.tm_year;
+    int month = input.tm_mon;
+    int day = input.tm_mday;
+    int hour = input.tm_hour;
+    int minute = input.tm_min;
+    int second = input.tm_sec;
+
+    printf("%d\n", modeIndex);
+
+    switch (modeIndex)
+    {
+    case DAILY:
+    {
+        /* code */
+        for (int i = 0; i < appc; i++)
+        {
+            int d[] = {year, month, day + i, hour, minute, second};
+            long long int unixTime = toUnixtime(d);
+            output[i].startdatum = *localtime(&unixTime);
+            printf("%d\n", d[0]);
+        }
+
+        break;
+    }
+    case WEEKLY:
+    {
+        for (int i = 0; i < appc; i++)
+        {
+            int d[] = {year, month, day + (i * 7), hour, minute, second};
+            long long int unixTime = toUnixtime(d);
+            output[i].startdatum = *localtime(&unixTime);
+            printf("%d.%d\n",output[i].startdatum.tm_mon,output[i].startdatum.tm_mday);
+        }
+
+        break;
+    }
+    case TWEEKLY:
+    {
+        for (int i = 0; i < appc; i++)
+        {
+            int d[] = {year, month, day + (i * 14), hour, minute, second};
+            long long int unixTime = toUnixtime(d);
+            output[i].startdatum = *localtime(&unixTime);
+        }
+
+        break;
+    }
+    default:
+        break;
+    }
+}
 
 
 int main(void) {
@@ -133,6 +214,13 @@ int main(void) {
     //struct Termin appointments[MAX_APPOINTMENTS];
 
     int countAppointments = 0, userInputMainMenu;
+
+    int mins1;
+    int hours1;
+    int day1;
+    int month1;
+    int years1;
+    struct tm datumInput;
 
     while (1) {
         int tempUserInput[1];
@@ -146,6 +234,12 @@ int main(void) {
 
                 //struct Termin *appointments = (struct Termin *) malloc(1 * sizeof(struct Termin ));
                 countAppointments = resizeArray(appointmentsPtr, 1, countAppointments);
+                toScan(&mins1,&hours1,&day1,&month1,&years1,&datumInput);
+
+                printf("%d-%d-%d\n", datumInput.tm_year, datumInput.tm_mon, datumInput.tm_mday);
+
+                (*(appointmentsPtr+(countAppointments-1))).startdatum = datumInput;
+                //(*(appointmentsPtr+(countAppointments-1))).dauer = getDauer();
                 (*(appointmentsPtr+(countAppointments-1))).dauer = getDauer();
                 char title[20];
                 getTitel(title);
@@ -156,6 +250,45 @@ int main(void) {
             case 2: {
                 //Terminserie anlegen
                 //braucht countappointments + 1 für speicheradresse auf terminserie
+                int numberOfAppointmentsForSeries = 5; //TODO: Needs to be changed to user-input;
+                
+                countAppointments = resizeArray(appointmentsPtr, numberOfAppointmentsForSeries, countAppointments);
+
+                struct tm startDate;
+                startDate.tm_year = 123;
+                startDate.tm_mon = 10;
+                startDate.tm_mday = 11;
+                startDate.tm_hour = 9;
+                startDate.tm_min = 13;
+                startDate.tm_sec = 15;
+
+                char title[20];
+                getTitel(title);
+                struct Termin startAppointment = {startDate, getDauer(), title};
+
+                int dauer = getDauer();
+                //(*(appointmentsPtr+(numberOfAppointmentsForSeries))).dauer = getDauer();
+                    
+                //getTitel(title);
+                //stringcpy((*(appointmentsPtr+(numberOfAppointmentsForSeries))).titel, title, 20);
+
+                struct Termin series[numberOfAppointmentsForSeries];
+                createAppointmentsSeries(startDate,series,WEEKLY,numberOfAppointmentsForSeries);
+                struct Termin *tptr = &appointmentsPtr[0];
+
+                for (int i = 0; i < numberOfAppointmentsForSeries; i++)
+                {
+                    //printf("%d.%d", series[i].startdatum.tm_mon, series[i].startdatum.tm_mday);
+
+                    // Assign content of "series" to main-appointments-array;
+                    tptr[(countAppointments-numberOfAppointmentsForSeries)*sizeof(struct Termin)].startdatum = series[i].startdatum;         
+                    //appointmentsPtr[countAppointments-numberOfAppointmentsForSeries].dauer = dauer;
+                    //stringcpy(appointmentsPtr[countAppointments-numberOfAppointmentsForSeries+i].titel, title,20);
+
+                    *(appointmentsPtr + sizeof(struct Termin));
+                    //printf("%d.%d", appointmentsPtr[countAppointments-numberOfAppointmentsForSeries].startdatum.tm_mon, appointmentsPtr[countAppointments-numberOfAppointmentsForSeries].startdatum.tm_mday);
+                }
+                
 
                 //braucht realloc speicherplatz für anzahl der zu speichernden
                 // termine * größe des termin structs
@@ -173,8 +306,14 @@ int main(void) {
                 //innere schleife läuft über termine (1 element) oder terminserien (bis länge)
                 //und gibt das Termin-Struct aus
                 for (int i = 0; i < countAppointments; i++) {
-                    struct Termin sapp = (*(appointmentsPtr+i));
-                    printf("%s\n",sapp.titel);
+                    struct Termin sapp = *(appointmentsPtr+(i*sizeof(struct Termin)));
+                    printf("%d",sapp.startdatum.tm_mday);
+                    char dateTime[80] = "";
+                    time_t time = mktime(&(sapp.startdatum));
+                    strftime(dateTime, 80,"%x",localtime(&time));
+                    printf("%80s\n",dateTime);
+                    printf("%20s\n",sapp.titel);
+                    printf("Datum: %80s, Titel: %20s, Dauer: %d Minuten\n", dateTime, sapp.titel, sapp.dauer);
                 }
                 //terminAusgabe(*appointmentsPtr, countAppointments);
             }break;
