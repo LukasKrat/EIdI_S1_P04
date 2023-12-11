@@ -302,12 +302,13 @@ int main(void) {
                     //printf("%d.%d", series[i].startdatum.tm_mon, series[i].startdatum.tm_mday);
                     // Assign content of "series" to main-appointments-array;
                     //tptr[(countAppointments-numberOfAppointmentsForSeries)*sizeof(struct Termin)].startdatum = series[i].startdatum;         
-                    (*(tptr+(countAppointments-numberOfAppointmentsForSeries-1)+i)).startdatum = series[i].startdatum;
+                    (*(appointmentsPtr+(countAppointments-numberOfAppointmentsForSeries-1)+i)).startdatum = series[i].startdatum;
                     //appointmentsPtr[countAppointments-numberOfAppointmentsForSeries].dauer = dauer;
                     
                     printf("Year: %d\n", (*(appointmentsPtr+(countAppointments-numberOfAppointmentsForSeries-1)+i)).startdatum.tm_year);
-                    
-                    stringcpy((*(tptr+(countAppointments-numberOfAppointmentsForSeries-1)+i)).titel, title,20);
+                    printf("Cell %d: %p\n", i, &(appointmentsPtr[(countAppointments-numberOfAppointmentsForSeries-1)+i].startdatum.tm_year));
+
+                    stringcpy((*(appointmentsPtr+(countAppointments-numberOfAppointmentsForSeries-1)+i)).titel, title,20);
 
                     //*(appointmentsPtr + sizeof(struct Termin));
                     //printf("%d.%d", appointmentsPtr[countAppointments-numberOfAppointmentsForSeries].startdatum.tm_mon, appointmentsPtr[countAppointments-numberOfAppointmentsForSeries].startdatum.tm_mday);
@@ -330,7 +331,8 @@ int main(void) {
                 //innere schleife läuft über termine (1 element) oder terminserien (bis länge)
                 //und gibt das Termin-Struct aus
                 for (int i = 0; i < countAppointments; i++) {
-                    struct Termin sapp = (*(appointmentsPtr+i));
+                    struct Termin sapp = appointmentsPtr[i];//(*(appointmentsPtr+i));
+                    printf("Cell %d: %p : %d\n", i, &(appointmentsPtr[i].startdatum.tm_year), appointmentsPtr[i].startdatum.tm_year);
                     printf("Print|%d-%d-%d\n",sapp.startdatum.tm_year, sapp.startdatum.tm_mon,sapp.startdatum.tm_mday);
                     char dateTime[80] = "";
                     time_t time = mktime(&(sapp.startdatum));
