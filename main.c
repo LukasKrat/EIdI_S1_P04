@@ -19,7 +19,7 @@ void clearInput() {
 /// Fordert den Benutzer auf eine Option
 /// des main menus aufzurufen
 /// \return die jeweilig auszufuerende option
-int getUserInputMainMenu(){
+void getUserInputMainMenu(int output[1]){
     puts("Bitte waehlen sie:");
     puts("1: Termin anlegen.");
     puts("2: Terminserie anlegen.");
@@ -28,9 +28,9 @@ int getUserInputMainMenu(){
     puts("5: naechsten Termin anzeigen.");
     puts("6: Kalenderausgabe.");
     puts("9: Programm beenden.");
-    int option;
-    scanf("%d", &option);
-    return option;
+    //int option;
+    scanf("%d", &output[0]);
+    //return option;
 }
 
 int getDauer(){
@@ -71,13 +71,8 @@ void stringcpy(char output[], char input[], int inputLength) {
     }
 }
 
-int resizeArray(struct Termin *ptr[], int elementsToAddCnt, int currentElementsCnt, struct Termin appointments[]) {
-    if (currentElementsCnt == 0) {
-        ptr[0] = appointments;
-    }
-    else {
-        realloc(ptr, (sizeof(termin *)*currentElementsCnt + elementsToAddCnt));
-    }
+int resizeArray(struct Termin *ptr, int elementsToAddCnt, int currentElementsCnt) {
+    realloc(ptr, (sizeof(struct Termin *)*(currentElementsCnt + elementsToAddCnt)));
 
     return currentElementsCnt + elementsToAddCnt;
 }
@@ -133,13 +128,16 @@ void kalenderAusgabe(){
 
 int main(void) {
     //maximale anzahl appointments per malloc
-    struct Termin *appointmentsPtr[1];
+    struct Termin *appointmentsPtr = NULL;
+    appointmentsPtr = malloc(sizeof (struct Termin));
     //struct Termin appointments[MAX_APPOINTMENTS];
 
     int countAppointments = 0, userInputMainMenu;
 
     while (1) {
-        userInputMainMenu = getUserInputMainMenu();
+        int tempUserInput[1];
+        getUserInputMainMenu(tempUserInput);
+        userInputMainMenu = tempUserInput[0];
         switch (userInputMainMenu) {
             case 1: {
                 //Termin anlegen
@@ -147,13 +145,12 @@ int main(void) {
                 //termintest.startdatum = toScan();
 
                 //struct Termin *appointments = (struct Termin *) malloc(1 * sizeof(struct Termin ));
-                struct Termin appointments[2];
-                countAppointments = resizeArray(appointmentsPtr, 1, countAppointments, appointments);
-                (appointmentsPtr+(countAppointments-1))[0]->dauer = getDauer();
+                countAppointments = resizeArray(appointmentsPtr, 1, countAppointments);
+                (*(appointmentsPtr+(countAppointments-1))).dauer = getDauer();
                 char title[20];
                 getTitel(title);
-                stringcpy(appointmentsPtr[countAppointments-1][0].titel, title, 20);
-                countAppointments = countAppointments +1;
+                stringcpy((*(appointmentsPtr+(countAppointments-1))).titel, title, 20);
+                //countAppointments = countAppointments +1;
 
             }break;
             case 2: {
@@ -175,7 +172,10 @@ int main(void) {
 
                 //innere schleife läuft über termine (1 element) oder terminserien (bis länge)
                 //und gibt das Termin-Struct aus
-
+                for (int i = 0; i < countAppointments; i++) {
+                    struct Termin sapp = (*(appointmentsPtr+i));
+                    printf("%s\n",sapp.titel);
+                }
                 //terminAusgabe(*appointmentsPtr, countAppointments);
             }break;
             case 5: {
@@ -191,6 +191,7 @@ int main(void) {
             default:
                 puts("Ungueltige Eingabe!");
         }
+        userInputMainMenu = 0;
         clearInput();
     }
     return 0;
