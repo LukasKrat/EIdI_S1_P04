@@ -20,6 +20,23 @@ void clearInput() {
 #endif
 }
 
+/// Function to set the elements of the given array to 0.
+/// \param input The array which's elements should be set to 0.
+/// \param arrayLength The length of the array.
+void setTerminArrayToZero(struct Termin input[], int arrayLength) {
+    for (int i = 0; i < arrayLength; i++) {
+        input[i].startdatum.tm_year = 0;
+        input[i].startdatum.tm_mon = 0;
+        input[i].startdatum.tm_mday = 0;
+        input[i].startdatum.tm_hour = 0;
+        input[i].startdatum.tm_sec = 0;
+        input[i].startdatum.tm_sec = 0;
+        input[i].startdatum.tm_wday = 0;
+        input[i].startdatum.tm_yday = 0;
+    }
+}
+
+
 void toScan(int *mins1, int *hours1, int *day1, int *month1, int *years1, struct tm *Datum1) {
     puts("Den Tag:");
 
@@ -154,7 +171,7 @@ void kalenderAusgabe(){
 /// @param output The array to which the result should be written.
 void createAppointmentsSeries(struct tm input, struct Termin output[], int modeIndex, int appc)
 {
-    int year = input.tm_year;
+    int year = input.tm_year+1900;
     int month = input.tm_mon;
     int day = input.tm_mday;
     int hour = input.tm_hour;
@@ -185,7 +202,7 @@ void createAppointmentsSeries(struct tm input, struct Termin output[], int modeI
             int d[] = {year, month, day + (i * 7), hour, minute, second};
             long long int unixTime = toUnixtime(d);
             output[i].startdatum = *localtime(&unixTime);
-            printf("%d.%d\n",output[i].startdatum.tm_mon,output[i].startdatum.tm_mday);
+            printf("%d-%d-%d\n",output[i].startdatum.tm_year,output[i].startdatum.tm_mon,output[i].startdatum.tm_mday);
         }
 
         break;
@@ -255,12 +272,16 @@ int main(void) {
                 countAppointments = resizeArray(appointmentsPtr, numberOfAppointmentsForSeries, countAppointments);
 
                 struct tm startDate;
+
                 startDate.tm_year = 123;
                 startDate.tm_mon = 10;
                 startDate.tm_mday = 11;
                 startDate.tm_hour = 9;
                 startDate.tm_min = 13;
                 startDate.tm_sec = 15;
+                startDate.tm_wday = 0;
+                startDate.tm_yday = 0;
+                startDate.tm_isdst = 0;
 
                 char title[20];
                 getTitel(title);
@@ -279,9 +300,10 @@ int main(void) {
                 for (int i = 0; i < numberOfAppointmentsForSeries; i++)
                 {
                     //printf("%d.%d", series[i].startdatum.tm_mon, series[i].startdatum.tm_mday);
-
+                    printf("Year: %d\n", (*(appointmentsPtr+(countAppointments-1))).startdatum.tm_year);
                     // Assign content of "series" to main-appointments-array;
-                    tptr[(countAppointments-numberOfAppointmentsForSeries)*sizeof(struct Termin)].startdatum = series[i].startdatum;         
+                    //tptr[(countAppointments-numberOfAppointmentsForSeries)*sizeof(struct Termin)].startdatum = series[i].startdatum;         
+                    (*(appointmentsPtr+(countAppointments-1))).startdatum = series[i].startdatum;
                     //appointmentsPtr[countAppointments-numberOfAppointmentsForSeries].dauer = dauer;
                     //stringcpy(appointmentsPtr[countAppointments-numberOfAppointmentsForSeries+i].titel, title,20);
 
@@ -307,12 +329,12 @@ int main(void) {
                 //und gibt das Termin-Struct aus
                 for (int i = 0; i < countAppointments; i++) {
                     struct Termin sapp = *(appointmentsPtr+(i*sizeof(struct Termin)));
-                    printf("%d",sapp.startdatum.tm_mday);
+                    printf("Print|%d-%d-%d",(sapp).startdatum.tm_year, (sapp).startdatum.tm_mon,(sapp).startdatum.tm_mday);
                     char dateTime[80] = "";
                     time_t time = mktime(&(sapp.startdatum));
                     strftime(dateTime, 80,"%x",localtime(&time));
                     printf("%80s\n",dateTime);
-                    printf("%20s\n",sapp.titel);
+                    printf("%20s\n",(sapp).titel);
                     printf("Datum: %80s, Titel: %20s, Dauer: %d Minuten\n", dateTime, sapp.titel, sapp.dauer);
                 }
                 //terminAusgabe(*appointmentsPtr, countAppointments);
