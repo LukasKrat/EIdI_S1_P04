@@ -334,7 +334,7 @@ int main(void) {
                     // Assign content of "series" to main-appointments-array;
                     //tptr[(countAppointments-numberOfAppointmentsForSeries)*sizeof(struct Termin)].startdatum = series[i].startdatum;         
                     (*(appointmentsPtr+(countAppointments-numberOfAppointmentsForSeries)+i)).startdatum = series[i].startdatum;
-                    //appointmentsPtr[countAppointments-numberOfAppointmentsForSeries].dauer = dauer;
+                    (*(appointmentsPtr+(countAppointments-numberOfAppointmentsForSeries)+i)).dauer = dauer[0];
                     
                     printf("Year: %d\n", (*(appointmentsPtr+(countAppointments-numberOfAppointmentsForSeries)+i)).startdatum.tm_year);
                     printf("Cell %d: %p\n", i, &(appointmentsPtr[(countAppointments-numberOfAppointmentsForSeries)+i].startdatum.tm_year));
