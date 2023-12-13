@@ -315,14 +315,9 @@ int main(void) {
 
                 char title[20];
                 getTitel(title);
-                //struct Termin startAppointment = {startDate, getDauer(), title};
 
                 int dauer[1];
                 getDauer(dauer);
-                //(*(appointmentsPtr+(numberOfAppointmentsForSeries))).dauer = getDauer();
-                    
-                //getTitel(title);
-                //stringcpy((*(appointmentsPtr+(numberOfAppointmentsForSeries))).titel, title, 20);
 
                 struct Termin series[numberOfAppointmentsForSeries];
                 createAppointmentsSeries(startDate,series,WEEKLY,numberOfAppointmentsForSeries);
@@ -330,19 +325,15 @@ int main(void) {
 
                 for (int i = 0; i < numberOfAppointmentsForSeries; i++)
                 {
-                    //printf("%d.%d", series[i].startdatum.tm_mon, series[i].startdatum.tm_mday);
                     // Assign content of "series" to main-appointments-array;
-                    //tptr[(countAppointments-numberOfAppointmentsForSeries)*sizeof(struct Termin)].startdatum = series[i].startdatum;         
                     (*(appointmentsPtr+(countAppointments-numberOfAppointmentsForSeries)+i)).startdatum = series[i].startdatum;
                     (*(appointmentsPtr+(countAppointments-numberOfAppointmentsForSeries)+i)).dauer = dauer[0];
                     
-                    printf("Year: %d\n", (*(appointmentsPtr+(countAppointments-numberOfAppointmentsForSeries)+i)).startdatum.tm_year);
-                    printf("Cell %d: %p\n", i, &(appointmentsPtr[(countAppointments-numberOfAppointmentsForSeries)+i].startdatum.tm_year));
+                    //printf("Year: %d\n", (*(appointmentsPtr+(countAppointments-numberOfAppointmentsForSeries)+i)).startdatum.tm_year);
+                    //printf("Cell %d: %p\n", i, &(appointmentsPtr[(countAppointments-numberOfAppointmentsForSeries)+i].startdatum.tm_year));
 
                     stringcpy((*(appointmentsPtr+(countAppointments-numberOfAppointmentsForSeries)+i)).titel, title,20);
 
-                    //*(appointmentsPtr + sizeof(struct Termin));
-                    //printf("%d.%d", appointmentsPtr[countAppointments-numberOfAppointmentsForSeries].startdatum.tm_mon, appointmentsPtr[countAppointments-numberOfAppointmentsForSeries].startdatum.tm_mday);
                 }
                 
 
