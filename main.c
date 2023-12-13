@@ -271,10 +271,7 @@ int main(void) {
 
                 printf("%d-%d-%d\n", datumInput.tm_year, datumInput.tm_mon, datumInput.tm_mday);
 
-                //(*(appointmentsPtr+(countAppointments-1))).startdatum = datumInput;
                 appointmentsPtr[countAppointments-1].startdatum = datumInput;
-
-                //(*(appointmentsPtr+(countAppointments-1))).dauer = getDauer();
 
                 printf("StartDate: %d-%d-%d", (*(appointmentsPtr+(countAppointments-1))).startdatum.tm_year, (*(appointmentsPtr+(countAppointments-1))).startdatum.tm_mon, (*(appointmentsPtr+(countAppointments-1))).startdatum.tm_mday);
 
