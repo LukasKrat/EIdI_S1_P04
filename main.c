@@ -41,19 +41,24 @@ void toScan(int *mins1, int *hours1, int *day1, int *month1, int *years1, struct
     puts("Den Tag:");
 
     scanf("%d", day1);
+    clearInput();
 
     puts("Den Monat:");
     scanf("%d", month1);
+    clearInput();
 
     puts("Das Jahr:");
     scanf("%d", years1);
     (*years1) -= 1900;
+    clearInput();
 
     puts("Die Stunde:");
     scanf("%d", hours1);
+    clearInput();
 
     puts("Die Minute:");
     scanf("%d", mins1);
+    clearInput();
 
     (*Datum1) = (struct tm){0, (*mins1) , (*hours1), (*day1), (*month1), (*years1), 0, 0, 0};
 }
@@ -61,7 +66,7 @@ void toScan(int *mins1, int *hours1, int *day1, int *month1, int *years1, struct
 /// Fordert den Benutzer auf eine Option
 /// des main menus aufzurufen
 /// \return die jeweilig auszufuerende option
-void getUserInputMainMenu(int output[1]){
+void getUserInputMainMenu(int output[2]){
     puts("Bitte waehlen sie:");
     puts("1: Termin anlegen.");
     puts("2: Terminserie anlegen.");
@@ -73,16 +78,23 @@ void getUserInputMainMenu(int output[1]){
     //int option;
     scanf("%d", &output[0]);
     //return option;
+    clearInput();
 }
 
-int getDauer(){
+void getDauer(int output[1]){
     puts("Bitte geben sie die laenge ihres Termins ein, maximal 8 stunden aka 28.800 sekunden:");
     int dauerToGet;
-    scanf("%d", &dauerToGet);
-    if(dauerToGet > 28800){
+    printf("GetDauerCell: %p\n", output);
+    scanf("%d", &output[0]);
+    printf("GetDauer: %d\n", output[0]);
+
+    clearInput();
+
+    if(*output > 28800){
         puts("der Termin geht zu lange.");
-        return 0;
-    }else return dauerToGet;
+        output = 0;
+        //return 0;
+    }//else return dauerToGet;
 }
 
 void getTitel(char output[]){
@@ -114,7 +126,7 @@ void stringcpy(char output[], char input[], int inputLength) {
 }
 
 int resizeArray(struct Termin *ptr, int elementsToAddCnt, int currentElementsCnt) {
-    realloc(ptr, (sizeof(struct Termin *)*(currentElementsCnt + elementsToAddCnt)));
+    realloc(ptr, (sizeof(struct Termin)*(currentElementsCnt + elementsToAddCnt)));
 
     return currentElementsCnt + elementsToAddCnt;
 }
@@ -240,7 +252,7 @@ int main(void) {
     struct tm datumInput;
 
     while (1) {
-        int tempUserInput[1];
+        int tempUserInput[2];
         getUserInputMainMenu(tempUserInput);
         userInputMainMenu = tempUserInput[0];
         switch (userInputMainMenu) {
@@ -257,7 +269,15 @@ int main(void) {
 
                 (*(appointmentsPtr+(countAppointments-1))).startdatum = datumInput;
                 //(*(appointmentsPtr+(countAppointments-1))).dauer = getDauer();
-                (*(appointmentsPtr+(countAppointments-1))).dauer = getDauer();
+
+                printf("StartDate: %d-%d-%d", (*(appointmentsPtr+(countAppointments-1))).startdatum.tm_year, (*(appointmentsPtr+(countAppointments-1))).startdatum.tm_mon, (*(appointmentsPtr+(countAppointments-1))).startdatum.tm_mday);
+
+                int dauer[1];
+                getDauer(dauer);
+
+                printf("Dauer: %d\n", dauer[0]);
+
+                (*(appointmentsPtr+(countAppointments-1))).dauer = dauer[0];
                 char title[20];
                 getTitel(title);
                 stringcpy((*(appointmentsPtr+(countAppointments-1))).titel, title, 20);
@@ -285,9 +305,10 @@ int main(void) {
 
                 char title[20];
                 getTitel(title);
-                struct Termin startAppointment = {startDate, getDauer(), title};
+                //struct Termin startAppointment = {startDate, getDauer(), title};
 
-                int dauer = getDauer();
+                int dauer[1];
+                getDauer(dauer);
                 //(*(appointmentsPtr+(numberOfAppointmentsForSeries))).dauer = getDauer();
                     
                 //getTitel(title);
