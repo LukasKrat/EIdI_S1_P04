@@ -125,8 +125,8 @@ void stringcpy(char output[], char input[], int inputLength) {
     }
 }
 
-int resizeArray(struct Termin *ptr, int elementsToAddCnt, int currentElementsCnt) {
-    realloc(ptr, (sizeof(struct Termin)*(currentElementsCnt + elementsToAddCnt)));
+int resizeArray(struct Termin *ptr, int elementsToAddCnt, int currentElementsCnt, struct Termin *outPtr) {
+    outPtr = (struct Termin *) realloc(ptr, (sizeof(struct Termin)*(currentElementsCnt + elementsToAddCnt)));
 
     return currentElementsCnt + elementsToAddCnt;
 }
@@ -262,12 +262,18 @@ int main(void) {
                 //termintest.startdatum = toScan();
 
                 //struct Termin *appointments = (struct Termin *) malloc(1 * sizeof(struct Termin ));
-                countAppointments = resizeArray(appointmentsPtr, 1, countAppointments);
+                struct Termin *tmpptr;
+                tmpptr = (struct Termin *) realloc(appointmentsPtr, (sizeof(struct Termin)*(countAppointments + 1)));
+                countAppointments = countAppointments + 1;
+                appointmentsPtr = tmpptr;
+
                 toScan(&mins1,&hours1,&day1,&month1,&years1,&datumInput);
 
                 printf("%d-%d-%d\n", datumInput.tm_year, datumInput.tm_mon, datumInput.tm_mday);
 
-                (*(appointmentsPtr+(countAppointments-1))).startdatum = datumInput;
+                //(*(appointmentsPtr+(countAppointments-1))).startdatum = datumInput;
+                appointmentsPtr[countAppointments-1].startdatum = datumInput;
+
                 //(*(appointmentsPtr+(countAppointments-1))).dauer = getDauer();
 
                 printf("StartDate: %d-%d-%d", (*(appointmentsPtr+(countAppointments-1))).startdatum.tm_year, (*(appointmentsPtr+(countAppointments-1))).startdatum.tm_mon, (*(appointmentsPtr+(countAppointments-1))).startdatum.tm_mday);
@@ -288,8 +294,12 @@ int main(void) {
                 //Terminserie anlegen
                 //braucht countappointments + 1 für speicheradresse auf terminserie
                 int numberOfAppointmentsForSeries = 5; //TODO: Needs to be changed to user-input;
-                
-                countAppointments = resizeArray(appointmentsPtr, numberOfAppointmentsForSeries, countAppointments);
+
+                struct Termin *tmpptr;
+                tmpptr = (struct Termin *) realloc(appointmentsPtr, (sizeof(struct Termin)*(countAppointments + numberOfAppointmentsForSeries)));
+                //countAppointments = resizeArray(appointmentsPtr, numberOfAppointmentsForSeries, countAppointments, tmpptr);
+                appointmentsPtr = tmpptr;
+                countAppointments = countAppointments + numberOfAppointmentsForSeries;
 
                 struct tm startDate;
 
@@ -323,13 +333,13 @@ int main(void) {
                     //printf("%d.%d", series[i].startdatum.tm_mon, series[i].startdatum.tm_mday);
                     // Assign content of "series" to main-appointments-array;
                     //tptr[(countAppointments-numberOfAppointmentsForSeries)*sizeof(struct Termin)].startdatum = series[i].startdatum;         
-                    (*(appointmentsPtr+(countAppointments-numberOfAppointmentsForSeries-1)+i)).startdatum = series[i].startdatum;
+                    (*(appointmentsPtr+(countAppointments-numberOfAppointmentsForSeries)+i)).startdatum = series[i].startdatum;
                     //appointmentsPtr[countAppointments-numberOfAppointmentsForSeries].dauer = dauer;
                     
-                    printf("Year: %d\n", (*(appointmentsPtr+(countAppointments-numberOfAppointmentsForSeries-1)+i)).startdatum.tm_year);
-                    printf("Cell %d: %p\n", i, &(appointmentsPtr[(countAppointments-numberOfAppointmentsForSeries-1)+i].startdatum.tm_year));
+                    printf("Year: %d\n", (*(appointmentsPtr+(countAppointments-numberOfAppointmentsForSeries)+i)).startdatum.tm_year);
+                    printf("Cell %d: %p\n", i, &(appointmentsPtr[(countAppointments-numberOfAppointmentsForSeries)+i].startdatum.tm_year));
 
-                    stringcpy((*(appointmentsPtr+(countAppointments-numberOfAppointmentsForSeries-1)+i)).titel, title,20);
+                    stringcpy((*(appointmentsPtr+(countAppointments-numberOfAppointmentsForSeries)+i)).titel, title,20);
 
                     //*(appointmentsPtr + sizeof(struct Termin));
                     //printf("%d.%d", appointmentsPtr[countAppointments-numberOfAppointmentsForSeries].startdatum.tm_mon, appointmentsPtr[countAppointments-numberOfAppointmentsForSeries].startdatum.tm_mday);
