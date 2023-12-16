@@ -22,6 +22,12 @@ void clearInput() {
 #endif
 }
 
+void stringcpy(char output[], char input[], int inputLength) {
+    for (int i = 0; i < inputLength; i++) {
+        output[i] = input[i];
+    }
+}
+
 /// Function to set the elements of the given array to 0.
 /// \param input The array which's elements should be set to 0.
 /// \param arrayLength The length of the array.
@@ -32,9 +38,12 @@ void setTerminArrayToZero(struct Termin input[], int arrayLength) {
         input[i].startdatum.tm_mday = 0;
         input[i].startdatum.tm_hour = 0;
         input[i].startdatum.tm_sec = 0;
-        input[i].startdatum.tm_sec = 0;
+        input[i].startdatum.tm_min = 0;
         input[i].startdatum.tm_wday = 0;
         input[i].startdatum.tm_yday = 0;
+        input[i].startdatum.tm_isdst = 0;
+        stringcpy(input[i].titel, "                    ", 20);
+        input[i].dauer = 0;
     }
 }
 
@@ -121,12 +130,6 @@ void getTitel(char output[]){
 }
  */
 
-void stringcpy(char output[], char input[], int inputLength) {
-    for (int i = 0; i < inputLength; i++) {
-        output[i] = input[i];
-    }
-}
-
 int resizeArray(struct Termin *ptr, int elementsToAddCnt, int currentElementsCnt, struct Termin *outPtr) {
     outPtr = (struct Termin *) realloc(ptr, (sizeof(struct Termin)*(currentElementsCnt + elementsToAddCnt)));
 
@@ -191,6 +194,13 @@ void getWeek(){
 
 }
 
+void setTerminCalendarArrayToZero(struct Termin **pTermin) {
+    for (int i = 0; i < 7; i++) {
+        int cnt = sizeof (pTermin[i]) / sizeof (struct Termin*);
+        setTerminArrayToZero(pTermin[i], cnt);
+    }
+}
+
 //
 void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek, int sizeOfAppointmentsArray){
     //struct tm startpunkt = getWeek();
@@ -206,6 +216,8 @@ void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek,
     for (int i = 0; i < 7; i++) {
         appointmentsPtrWeek[i] = malloc(sizeof *appointmentsPtrWeek[i] * 1);
     }
+
+    setTerminCalendarArrayToZero(appointmentsPtrWeek);
 
     int daysSinceMonday = (selectedDayOfWeek.tm_wday + 7 - 1) % 7;
     struct tm mondayDayOfSelectWeek = selectedDayOfWeek;
