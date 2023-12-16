@@ -155,6 +155,30 @@ void terminAusgabe(*appointmentsPtr, int countAppointments){
 }
 */
 
+void bubblesort(struct Termin array[], int length)
+{
+    int i, j;
+    struct Termin tmp;
+
+    for (i = 1; i < length; i++)
+    {
+        for (j = 0; j < length - i; j++)
+        {
+            int dayOfSelectedWeekAsArray[] = {array[j].startdatum.tm_year+1900, array[j].startdatum.tm_mon, array[j].startdatum.tm_mday, array[j].startdatum.tm_hour,array[j].startdatum.tm_min,array[j].startdatum.tm_sec};
+            int nextDayOfSelectedWeekAsArray[] = {array[j+1].startdatum.tm_year+1900, array[j+1].startdatum.tm_mon, array[j+1].startdatum.tm_mday, array[j+1].startdatum.tm_hour,array[j+1].startdatum.tm_min,array[j+1].startdatum.tm_sec};
+
+            long long int unixDayOfSelectedWeek = toUnixtime(dayOfSelectedWeekAsArray);
+            long long int unixNextDayOfSelectedWeek = toUnixtime(nextDayOfSelectedWeekAsArray);
+
+            if (unixDayOfSelectedWeek > unixNextDayOfSelectedWeek)
+            {
+                tmp = array[j];
+                array[j] = array[j + 1];
+                array[j + 1] = tmp;
+            }
+        }
+    }
+}
 
 ///fordere den benutzer auf eine woche einzugeben fuer die die
 /// termine als kalender ausgegeben werden sollen
@@ -164,7 +188,6 @@ void getWeek(){
     //verschiebe sodass unser eingegebener tag montag ist (tm_mday - tm_wday +1)
 
 }
-
 
 //
 void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek){
@@ -213,6 +236,15 @@ void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek)
     }
 
     // END: FILTERING
+
+    // BEGIN: SORTING
+
+    for (int i = 0; i < 7; ++i) {
+        int size = sizeof (*appointmentsPtrWeek[i]) / sizeof(struct Termin);
+        bubblesort(appointmentsPtrWeek[i], size);
+    }
+
+    // END: SORTING
 
     free(appointmentsPtrWeek);
 }
