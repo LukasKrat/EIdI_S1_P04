@@ -192,7 +192,7 @@ void getWeek(){
 }
 
 //
-void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek){
+void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek, int sizeOfAppointmentsArray){
     //struct tm startpunkt = getWeek();
 
     //-> wieder 2 schleifen für alle werte
@@ -203,6 +203,9 @@ void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek)
 
     struct Termin **appointmentsPtrWeek;
     appointmentsPtrWeek = (struct Termin**) malloc(sizeof *appointmentsPtrWeek * 7);
+    for (int i = 0; i < 7; i++) {
+        appointmentsPtrWeek[i] = malloc(sizeof *appointmentsPtrWeek[i] * 1);
+    }
 
     int daysSinceMonday = (selectedDayOfWeek.tm_wday + 7 - 1) % 7;
     struct tm mondayDayOfSelectWeek = selectedDayOfWeek;
@@ -217,7 +220,7 @@ void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek)
 
     // BEGIN: FILTERING
 
-    int sizeOfAppointmentsArray = sizeof(*appointmentPtr) / sizeof(struct Termin);
+    //int sizeOfAppointmentsArray = sizeof(*appointmentPtr) / sizeof(struct Termin);
 
     for (int i = 0; i < sizeOfAppointmentsArray; i++) {
         int dayOfSelectedWeekAsArray[] = {appointmentPtr[i].startdatum.tm_year+1900, appointmentPtr[i].startdatum.tm_mon, appointmentPtr[i].startdatum.tm_mday, appointmentPtr[i].startdatum.tm_hour,appointmentPtr[i].startdatum.tm_min,appointmentPtr[i].startdatum.tm_sec};
@@ -234,7 +237,7 @@ void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek)
 
         appointmentsPtrWeek[weekdayIndex][weekdaySize] = appointmentPtr[i];
 
-        free(tmp);
+        //free(tmp);
     }
 
     // END: FILTERING
@@ -253,15 +256,17 @@ void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek)
     int maxAppointsDay = getMaxSize(appointmentsPtrWeek);
     int currentAppointentIndex = 0;
 
+    printf("%26s|%26s|%26s|%26s|%26s|%26s|%26s\n", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag");
 
-    for (int j = 0; j < maxAppointsDay; j++) {
+    for (int j = 0; j < maxAppointsDay+1; j++) {
         for (int i = 0; i < 7; i++) {
             int maxSizeDay = sizeof (*appointmentsPtrWeek[i]) / sizeof(struct Termin);
-            if (maxSizeDay <= j) break;
+            if (maxSizeDay >= j)
+                printf("%26s|"/*,appointmentsPtrWeek[i][j].startdatum.tm_hour,appointmentsPtrWeek[i][j].startdatum.tm_min*/,appointmentsPtrWeek[i][j].titel);
 
-            printf("%2d:%2d / %20s|",appointmentsPtrWeek[i][j].startdatum.tm_hour,appointmentsPtrWeek[i][j].startdatum.tm_min,appointmentsPtrWeek[i][j].titel);
+            //printf("%26s|", "appointment");
         }
-        puts("");
+        puts("\n");
     }
 
     // END: PRINT
@@ -470,8 +475,10 @@ int main(void) {
             }break;
             case 6: {
                 //Kalenderausgabe
-                struct tm selectedDayOfWeek;
-                kalenderAusgabe(appointmentsPtr, selectedDayOfWeek);
+                int testDay[] = {2023, 11,11,12,3};
+                long long int testDayUnix = toUnixtime(testDay);
+                struct tm selectedDayOfWeek = *localtime(&testDayUnix);
+                kalenderAusgabe(appointmentsPtr, selectedDayOfWeek, countAppointments);
             }break;
             case 9:
             {
