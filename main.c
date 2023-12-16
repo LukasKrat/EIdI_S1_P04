@@ -11,6 +11,8 @@
 #define WEEKLY 2
 #define TWEEKLY 3
 
+int getMaxSize(struct Termin **pTermin);
+
 /// clears the input of the console
 void clearInput() {
 #if WIN32 || WIN64
@@ -239,14 +241,43 @@ void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek)
 
     // BEGIN: SORTING
 
-    for (int i = 0; i < 7; ++i) {
+    for (int i = 0; i < 7; i++) {
         int size = sizeof (*appointmentsPtrWeek[i]) / sizeof(struct Termin);
         bubblesort(appointmentsPtrWeek[i], size);
     }
 
     // END: SORTING
 
+    // BEGIN: PRINT
+
+    int maxAppointsDay = getMaxSize(appointmentsPtrWeek);
+    int currentAppointentIndex = 0;
+
+
+    for (int j = 0; j < maxAppointsDay; j++) {
+        for (int i = 0; i < 7; i++) {
+            int maxSizeDay = sizeof (*appointmentsPtrWeek[i]) / sizeof(struct Termin);
+            if (maxSizeDay <= j) break;
+
+            printf("%2d:%2d / %20s|",appointmentsPtrWeek[i][j].startdatum.tm_hour,appointmentsPtrWeek[i][j].startdatum.tm_min,appointmentsPtrWeek[i][j].titel);
+        }
+        puts("");
+    }
+
+    // END: PRINT
+
     free(appointmentsPtrWeek);
+}
+
+int getMaxSize(struct Termin **appointmentsOfWeek) {
+    int maxCount = 0;
+
+    for (int i = 0; i < 7; i++) {
+        int size = sizeof (*appointmentsOfWeek[i]) / sizeof(struct Termin);
+        maxCount = maxCount < size ? size : maxCount;
+    }
+
+    return maxCount;
 }
 
 /// @brief Creates a series if appointments.
