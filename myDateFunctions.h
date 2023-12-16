@@ -15,5 +15,7 @@ void printCalendarForYear(int y);
 long long toUnixtime(int date[]);
 const char *unixtimeToString(long long timeStamp);
 int compare(int first[], int second[]);
+int dateInRange(int date[], int dateLowerLimit[], int dateUpperLimit[]);
+
 
 #endif

@@ -167,7 +167,7 @@ void getWeek(){
 
 
 //
-void kalenderAusgabe(){
+void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek){
     //struct tm startpunkt = getWeek();
 
     //-> wieder 2 schleifen für alle werte
@@ -176,6 +176,45 @@ void kalenderAusgabe(){
     //drucke einen wert für montag, dann dienstag.... bis sonntag
     //mache eine neue zeile und wiederhole bis alle gedruckt
 
+    struct Termin **appointmentsPtrWeek;
+    appointmentsPtrWeek = (struct Termin**) malloc(sizeof *appointmentsPtrWeek * 7);
+
+    int daysSinceMonday = (selectedDayOfWeek.tm_wday + 7 - 1) % 7;
+    struct tm mondayDayOfSelectWeek = selectedDayOfWeek;
+    mondayDayOfSelectWeek.tm_mday -= daysSinceMonday;
+    mktime(&mondayDayOfSelectWeek);
+
+    int mondayDayOfSelectedWeekAsArray[] = {mondayDayOfSelectWeek.tm_year+1900, mondayDayOfSelectWeek.tm_mon, mondayDayOfSelectWeek.tm_mday, 0,0,0};
+    long long int mondayDayOfSelectedWeekUnixTime = toUnixtime(mondayDayOfSelectedWeekAsArray);
+
+    int sundayOfSelectedWeekAsArray[] = {mondayDayOfSelectWeek.tm_year+1900, mondayDayOfSelectWeek.tm_mon, mondayDayOfSelectWeek.tm_mday+7, 23,59,59};
+    long long int sundayOfSelectedWeekUnixTime = toUnixtime(sundayOfSelectedWeekAsArray);
+
+    // BEGIN: FILTERING
+
+    int sizeOfAppointmentsArray = sizeof(*appointmentPtr) / sizeof(struct Termin);
+
+    for (int i = 0; i < sizeOfAppointmentsArray; i++) {
+        int dayOfSelectedWeekAsArray[] = {appointmentPtr[i].startdatum.tm_year+1900, appointmentPtr[i].startdatum.tm_mon, appointmentPtr[i].startdatum.tm_mday, appointmentPtr[i].startdatum.tm_hour,appointmentPtr[i].startdatum.tm_min,appointmentPtr[i].startdatum.tm_sec};
+
+        int isInRange = dateInRange(dayOfSelectedWeekAsArray, mondayDayOfSelectedWeekAsArray, sundayOfSelectedWeekAsArray);
+
+        if (isInRange != 1) continue;
+
+        int weekdayIndex = appointmentPtr[i].startdatum.tm_wday == 0 ? 6 :  appointmentPtr[i].startdatum.tm_wday - 1;
+        int weekdaySize = sizeof(*appointmentsPtrWeek[weekdayIndex]) / sizeof(struct Termin);
+
+        struct Termin **tmp = (struct Termin**) realloc(appointmentsPtrWeek,sizeof *appointmentsPtrWeek[weekdayIndex] * (weekdaySize+1));
+        appointmentsPtrWeek = tmp;
+
+        appointmentsPtrWeek[weekdayIndex][weekdaySize] = appointmentPtr[i];
+
+        free(tmp);
+    }
+
+    // END: FILTERING
+
+    free(appointmentsPtrWeek);
 }
 
 /// @brief Creates a series if appointments.
@@ -368,10 +407,14 @@ int main(void) {
             }break;
             case 6: {
                 //Kalenderausgabe
+                struct tm selectedDayOfWeek;
+                kalenderAusgabe(appointmentsPtr, selectedDayOfWeek);
             }break;
             case 9:
+            {
                 puts("Programm beendet.");
                 return 0; //Programm beenden
+            }
             default:
                 puts("Ungueltige Eingabe!");
         }
