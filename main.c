@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include "appointment.h"
 #include "myDateFunctions.h"
+#include "string.h"
 
 #define DAILY 1
 #define WEEKLY 2
@@ -23,15 +24,23 @@ void clearInput() {
 }
 
 void stringcpy(char output[], char input[], int inputLength) {
-    for (int i = 0; i < inputLength; i++) {
-        output[i] = input[i];
+    //int outputLength = sizeof(output);
+
+    for (int i = 0; i < inputLength-1; i++) {
+        if (inputLength > i)
+            output[i] = input[i];
+        else
+            output[i] = (char)0;
     }
+
+    output[inputLength-1]='\0';
 }
 
 /// Function to set the elements of the given array to 0.
 /// \param input The array which's elements should be set to 0.
 /// \param arrayLength The length of the array.
 void setTerminArrayToZero(struct Termin input[], int arrayLength) {
+    char emptyString[] = "";
     for (int i = 0; i < arrayLength; i++) {
         input[i].startdatum.tm_year = 0;
         input[i].startdatum.tm_mon = 0;
@@ -42,12 +51,14 @@ void setTerminArrayToZero(struct Termin input[], int arrayLength) {
         input[i].startdatum.tm_wday = 0;
         input[i].startdatum.tm_yday = 0;
         input[i].startdatum.tm_isdst = 0;
-        stringcpy(input[i].titel, "                    ", 20);
+        //stringcpy(input[i].titel, emptyString, 20);
+        strcpy(input[i].titel, "");
         input[i].dauer = 0;
     }
 }
 
 void setTerminToZero(struct Termin *appointment) {
+    char emptyString[] = "";
     appointment->startdatum.tm_year = 0;
     appointment->startdatum.tm_mon = 0;
     appointment->startdatum.tm_mday = 0;
@@ -57,7 +68,8 @@ void setTerminToZero(struct Termin *appointment) {
     appointment->startdatum.tm_wday = 0;
     appointment->startdatum.tm_yday = 0;
     appointment->startdatum.tm_isdst = 0;
-    stringcpy(appointment->titel, "                    ", 20);
+    //stringcpy(appointment->titel, emptyString, 20);
+    strcpy(appointment->titel, "");
     appointment->dauer = 0;
 }
 
@@ -265,6 +277,8 @@ void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek,
         for (int z=0; z < 7; z++) {
             for (int j = weekdaySize; j < weekdaySize+1; j++)
             {
+                char emptyString[] = "";
+
                 //setTerminToZero(&appointmentsPtrWeek[z][j]);
                 appointmentsPtrWeek[z][j].startdatum.tm_year = 0;
                 appointmentsPtrWeek[z][j].startdatum.tm_mon = 0;
@@ -275,17 +289,33 @@ void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek,
                 appointmentsPtrWeek[z][j].startdatum.tm_wday = 0;
                 appointmentsPtrWeek[z][j].startdatum.tm_yday = 0;
                 appointmentsPtrWeek[z][j].startdatum.tm_isdst = 0;
-                stringcpy(appointmentsPtrWeek[z][j].titel, "                    ", 20);
+                //stringcpy(appointmentsPtrWeek[z][j].titel, emptyString, 20);
+
+                //memset(appointmentsPtrWeek[z][j].titel, '\0', sizeof(appointmentsPtrWeek[z][j].titel)/sizeof(char));
                 appointmentsPtrWeek[z][j].dauer = 0;
             }
+            printf("%p", appointmentsPtrWeek);
         }
 
-        appointmentsPtrWeek[weekdayIndex][weekdaySize] = appointmentPtr[i];
+        appointmentsPtrWeek[weekdayIndex][weekdaySize].startdatum.tm_year = appointmentPtr[i].startdatum.tm_year;
+        appointmentsPtrWeek[weekdayIndex][weekdaySize].startdatum.tm_mon = appointmentPtr[i].startdatum.tm_mon;
+        appointmentsPtrWeek[weekdayIndex][weekdaySize].startdatum.tm_mday = appointmentPtr[i].startdatum.tm_mday;
+        appointmentsPtrWeek[weekdayIndex][weekdaySize].startdatum.tm_hour = appointmentPtr[i].startdatum.tm_hour;
+        appointmentsPtrWeek[weekdayIndex][weekdaySize].startdatum.tm_sec = appointmentPtr[i].startdatum.tm_sec;
+        appointmentsPtrWeek[weekdayIndex][weekdaySize].startdatum.tm_wday = appointmentPtr[i].startdatum.tm_wday;
+        appointmentsPtrWeek[weekdayIndex][weekdaySize].startdatum.tm_isdst = appointmentPtr[i].startdatum.tm_isdst;
+        appointmentsPtrWeek[weekdayIndex][weekdaySize].startdatum.tm_yday = appointmentPtr[i].startdatum.tm_yday;
+        appointmentsPtrWeek[weekdayIndex][weekdaySize].startdatum.tm_min = appointmentPtr[i].startdatum.tm_min;
+        //stringcpy(appointmentsPtrWeek[weekdayIndex][weekdaySize].titel, appointmentPtr[i].titel, 20);
+        //strcpy(appointmentsPtrWeek[weekdayIndex][weekdaySize].titel, appointmentPtr[i].titel);
+
+        appointmentsPtrWeek[weekdayIndex][weekdaySize].dauer = appointmentPtr[i].dauer;
 
         //free(tmp);
+        printf("%p",tmp);
     }
 
-    free(tmp);
+    //free(tmp);
 
     // END: FILTERING
 
