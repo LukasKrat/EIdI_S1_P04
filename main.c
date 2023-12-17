@@ -47,6 +47,20 @@ void setTerminArrayToZero(struct Termin input[], int arrayLength) {
     }
 }
 
+void setTerminToZero(struct Termin *appointment) {
+    appointment->startdatum.tm_year = 0;
+    appointment->startdatum.tm_mon = 0;
+    appointment->startdatum.tm_mday = 0;
+    appointment->startdatum.tm_hour = 0;
+    appointment->startdatum.tm_sec = 0;
+    appointment->startdatum.tm_min = 0;
+    appointment->startdatum.tm_wday = 0;
+    appointment->startdatum.tm_yday = 0;
+    appointment->startdatum.tm_isdst = 0;
+    stringcpy(appointment->titel, "                    ", 20);
+    appointment->dauer = 0;
+}
+
 
 void toScan(int *mins1, int *hours1, int *day1, int *month1, int *years1, struct tm *Datum1) {
     puts("Den Tag:");
@@ -233,7 +247,7 @@ void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek,
     // BEGIN: FILTERING
 
     //int sizeOfAppointmentsArray = sizeof(*appointmentPtr) / sizeof(struct Termin);
-
+    struct Termin **tmp = NULL;
     for (int i = 0; i < sizeOfAppointmentsArray; i++) {
         int dayOfSelectedWeekAsArray[] = {appointmentPtr[i].startdatum.tm_year+1900, appointmentPtr[i].startdatum.tm_mon, appointmentPtr[i].startdatum.tm_mday, appointmentPtr[i].startdatum.tm_hour,appointmentPtr[i].startdatum.tm_min,appointmentPtr[i].startdatum.tm_sec};
 
@@ -244,13 +258,34 @@ void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek,
         int weekdayIndex = appointmentPtr[i].startdatum.tm_wday == 0 ? 6 :  appointmentPtr[i].startdatum.tm_wday - 1;
         int weekdaySize = sizeof(*appointmentsPtrWeek[weekdayIndex]) / sizeof(struct Termin);
 
-        struct Termin **tmp = (struct Termin**) realloc(appointmentsPtrWeek,sizeof *appointmentsPtrWeek[weekdayIndex] * (weekdaySize+1));
+        tmp = (struct Termin**) realloc(appointmentsPtrWeek,sizeof *appointmentsPtrWeek[weekdayIndex] * (weekdaySize+1));
+
         appointmentsPtrWeek = tmp;
+
+        for (int z=0; z < 7; z++) {
+            for (int j = weekdaySize; j < weekdaySize+1; j++)
+            {
+                //setTerminToZero(&appointmentsPtrWeek[z][j]);
+                appointmentsPtrWeek[z][j].startdatum.tm_year = 0;
+                appointmentsPtrWeek[z][j].startdatum.tm_mon = 0;
+                appointmentsPtrWeek[z][j].startdatum.tm_mday = 0;
+                appointmentsPtrWeek[z][j].startdatum.tm_hour = 0;
+                appointmentsPtrWeek[z][j].startdatum.tm_sec = 0;
+                appointmentsPtrWeek[z][j].startdatum.tm_min = 0;
+                appointmentsPtrWeek[z][j].startdatum.tm_wday = 0;
+                appointmentsPtrWeek[z][j].startdatum.tm_yday = 0;
+                appointmentsPtrWeek[z][j].startdatum.tm_isdst = 0;
+                stringcpy(appointmentsPtrWeek[z][j].titel, "                    ", 20);
+                appointmentsPtrWeek[z][j].dauer = 0;
+            }
+        }
 
         appointmentsPtrWeek[weekdayIndex][weekdaySize] = appointmentPtr[i];
 
         //free(tmp);
     }
+
+    free(tmp);
 
     // END: FILTERING
 
@@ -400,7 +435,7 @@ int main(void) {
                 printf("Dauer: %d\n", dauer[0]);
 
                 (*(appointmentsPtr+(countAppointments-1))).dauer = dauer[0];
-                char title[20];
+                char title[20] = "";
                 getTitel(title);
                 stringcpy((*(appointmentsPtr+(countAppointments-1))).titel, title, 20);
                 //countAppointments = countAppointments +1;
@@ -415,6 +450,11 @@ int main(void) {
                 tmpptr = (struct Termin *) realloc(appointmentsPtr, (sizeof(struct Termin)*(countAppointments + numberOfAppointmentsForSeries)));
                 //countAppointments = resizeArray(appointmentsPtr, numberOfAppointmentsForSeries, countAppointments, tmpptr);
                 appointmentsPtr = tmpptr;
+
+                for (int i = countAppointments; i < numberOfAppointmentsForSeries; i++) {
+                    setTerminToZero(&(appointmentsPtr[i]));
+                }
+
                 countAppointments = countAppointments + numberOfAppointmentsForSeries;
 
                 struct tm startDate;
@@ -429,7 +469,7 @@ int main(void) {
                 startDate.tm_yday = 0;
                 startDate.tm_isdst = 0;
 
-                char title[20];
+                char title[20] = "";
                 getTitel(title);
 
                 int dauer[1];
@@ -452,7 +492,7 @@ int main(void) {
 
                 }
                 
-
+                //free(tptr);
                 //braucht realloc speicherplatz für anzahl der zu speichernden
                 // termine * größe des termin structs
             }break;
