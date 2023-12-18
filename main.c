@@ -233,6 +233,7 @@ void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek,
     // BEGIN: FILTERING
 
     //int sizeOfAppointmentsArray = sizeof(*appointmentPtr) / sizeof(struct Termin);
+    struct Termin **tmp = NULL;
 
     for (int i = 0; i < sizeOfAppointmentsArray; i++) {
         int dayOfSelectedWeekAsArray[] = {appointmentPtr[i].startdatum.tm_year+1900, appointmentPtr[i].startdatum.tm_mon, appointmentPtr[i].startdatum.tm_mday, appointmentPtr[i].startdatum.tm_hour,appointmentPtr[i].startdatum.tm_min,appointmentPtr[i].startdatum.tm_sec};
@@ -244,8 +245,38 @@ void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek,
         int weekdayIndex = appointmentPtr[i].startdatum.tm_wday == 0 ? 6 :  appointmentPtr[i].startdatum.tm_wday - 1;
         int weekdaySize = sizeof(*appointmentsPtrWeek[weekdayIndex]) / sizeof(struct Termin);
 
-        struct Termin **tmp = (struct Termin**) realloc(appointmentsPtrWeek,sizeof *appointmentsPtrWeek[weekdayIndex] * (weekdaySize+1));
+        tmp = (struct Termin**) realloc(appointmentsPtrWeek,sizeof *appointmentsPtrWeek[weekdayIndex] * (weekdaySize+1));
+
+        for (int pd = 0; pd < 7; pd++) {
+            for (int pa = 0; pa < weekdaySize+1; pa++) {
+                struct Termin *tmp2 = NULL;
+                tmp2 = realloc(tmp[pd],sizeof(struct Termin) * (weekdaySize+1));
+                if (tmp2 == NULL) continue;
+                tmp[pd] = tmp2;
+                //free(tmp2);
+            }
+        }
+
         appointmentsPtrWeek = tmp;
+
+        for (int z = 0; z < 7; z++)
+        {
+            for (int j = weekdaySize; j < weekdaySize+1; j++) {
+                appointmentsPtrWeek[z][j].startdatum.tm_year = 0;
+                appointmentsPtrWeek[z][j].startdatum.tm_mon = 0;
+                appointmentsPtrWeek[z][j].startdatum.tm_mday = 0;
+                appointmentsPtrWeek[z][j].startdatum.tm_hour = 0;
+                appointmentsPtrWeek[z][j].startdatum.tm_sec = 0;
+                appointmentsPtrWeek[z][j].startdatum.tm_min = 0;
+                appointmentsPtrWeek[z][j].startdatum.tm_wday = 0;
+                appointmentsPtrWeek[z][j].startdatum.tm_yday = 0;
+                appointmentsPtrWeek[z][j].startdatum.tm_isdst = 0;
+                stringcpy(appointmentsPtrWeek[z][j].titel, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0", 20);
+                appointmentsPtrWeek[z][j].dauer = 0;
+
+                //setTerminArrayToZero(appointmentsPtrWeek[z][j],1);
+            }
+        }
 
         appointmentsPtrWeek[weekdayIndex][weekdaySize] = appointmentPtr[i];
 
@@ -282,8 +313,8 @@ void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek,
     }
 
     // END: PRINT
-
     free(appointmentsPtrWeek);
+    //free(tmp);
 }
 
 int getMaxSize(struct Termin **appointmentsOfWeek) {
