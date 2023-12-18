@@ -42,7 +42,7 @@ void setTerminArrayToZero(struct Termin input[], int arrayLength) {
         input[i].startdatum.tm_wday = 0;
         input[i].startdatum.tm_yday = 0;
         input[i].startdatum.tm_isdst = 0;
-        stringcpy(input[i].titel, "                    ", 20);
+        stringcpy(input[i].titel, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0", 20);
         input[i].dauer = 0;
     }
 }
@@ -429,7 +429,7 @@ int main(void) {
                 startDate.tm_yday = 0;
                 startDate.tm_isdst = 0;
 
-                char title[20];
+                char title[20] = "";
                 getTitel(title);
 
                 int dauer[1];
