@@ -227,7 +227,7 @@ void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek,
     int mondayDayOfSelectedWeekAsArray[] = {mondayDayOfSelectWeek.tm_year+1900, mondayDayOfSelectWeek.tm_mon, mondayDayOfSelectWeek.tm_mday, 0,0,0};
     long long int mondayDayOfSelectedWeekUnixTime = toUnixtime(mondayDayOfSelectedWeekAsArray);
 
-    int sundayOfSelectedWeekAsArray[] = {mondayDayOfSelectWeek.tm_year+1900, mondayDayOfSelectWeek.tm_mon, mondayDayOfSelectWeek.tm_mday+7, 23,59,59};
+    int sundayOfSelectedWeekAsArray[] = {mondayDayOfSelectWeek.tm_year+1900, mondayDayOfSelectWeek.tm_mon, mondayDayOfSelectWeek.tm_mday+6, 23,59,59};
     long long int sundayOfSelectedWeekUnixTime = toUnixtime(sundayOfSelectedWeekAsArray);
 
     // BEGIN: FILTERING
