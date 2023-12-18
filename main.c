@@ -305,7 +305,7 @@ void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek,
         for (int i = 0; i < 7; i++) {
             int maxSizeDay = sizeof (*appointmentsPtrWeek[i]) / sizeof(struct Termin);
             if (maxSizeDay >= j)
-                printf("%26s|"/*,appointmentsPtrWeek[i][j].startdatum.tm_hour,appointmentsPtrWeek[i][j].startdatum.tm_min*/,appointmentsPtrWeek[i][j].titel);
+                printf("%20s %2d:%2d|",appointmentsPtrWeek[i][j].titel,appointmentsPtrWeek[i][j].startdatum.tm_hour,appointmentsPtrWeek[i][j].startdatum.tm_min);
 
             //printf("%26s|", "appointment");
         }
