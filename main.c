@@ -248,7 +248,7 @@ void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek,
         tmp = (struct Termin**) realloc(appointmentsPtrWeek,sizeof *appointmentsPtrWeek[weekdayIndex] * (weekdaySize+1));
 
         for (int pd = 0; pd < 7; pd++) {
-            for (int pa = 0; pa < weekdaySize+1; pa++) {
+            for (int pa = weekdaySize; pa < weekdaySize+1; pa++) {
                 struct Termin *tmp2 = NULL;
                 tmp2 = realloc(tmp[pd],sizeof(struct Termin) * (weekdaySize+1));
                 if (tmp2 == NULL) continue;
@@ -278,7 +278,7 @@ void kalenderAusgabe(struct Termin *appointmentPtr, struct tm selectedDayOfWeek,
             }
         }
 
-        appointmentsPtrWeek[weekdayIndex][weekdaySize] = appointmentPtr[i];
+        appointmentsPtrWeek[weekdayIndex][weekdaySize-1] = appointmentPtr[i];
 
         //free(tmp);
     }
@@ -451,7 +451,7 @@ int main(void) {
                 struct tm startDate;
 
                 startDate.tm_year = 123;
-                startDate.tm_mon = 10;
+                startDate.tm_mon = 11;
                 startDate.tm_mday = 11;
                 startDate.tm_hour = 9;
                 startDate.tm_min = 13;
@@ -467,7 +467,7 @@ int main(void) {
                 getDauer(dauer);
 
                 struct Termin series[numberOfAppointmentsForSeries];
-                createAppointmentsSeries(startDate,series,WEEKLY,numberOfAppointmentsForSeries);
+                createAppointmentsSeries(startDate,series,DAILY,numberOfAppointmentsForSeries);
                 struct Termin *tptr = &appointmentsPtr[0];
 
                 for (int i = 0; i < numberOfAppointmentsForSeries; i++)
