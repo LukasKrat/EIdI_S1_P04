@@ -460,14 +460,22 @@ int main(void) {
                 startDate.tm_yday = 0;
                 startDate.tm_isdst = 0;
 
+                //toScan(&mins1,&hours1,&day1,&month1,&years1,&datumInput);
+
+                //startDate = datumInput;
+
                 char title[20] = "";
                 getTitel(title);
 
                 int dauer[1];
                 getDauer(dauer);
 
+                int intervalMode[1];
+                puts("Bitte interval-modus eingeben:\n");
+                scanf("%d", &intervalMode[0]);
+
                 struct Termin series[numberOfAppointmentsForSeries];
-                createAppointmentsSeries(startDate,series,DAILY,numberOfAppointmentsForSeries);
+                createAppointmentsSeries(startDate,series,intervalMode[0],numberOfAppointmentsForSeries);
                 struct Termin *tptr = &appointmentsPtr[0];
 
                 for (int i = 0; i < numberOfAppointmentsForSeries; i++)
@@ -518,7 +526,11 @@ int main(void) {
             }break;
             case 6: {
                 //Kalenderausgabe
-                int testDay[] = {2023, 11,11,12,3};
+                toScan(&mins1,&hours1,&day1,&month1,&years1,&datumInput);
+                int testDay[] = {years1, month1, day1, hours1, mins1};
+
+                printf("%d-%d-%d %d:%d\n",testDay[0],testDay[1],testDay[2],testDay[3],testDay[4]);
+
                 long long int testDayUnix = toUnixtime(testDay);
                 struct tm selectedDayOfWeek = *localtime(&testDayUnix);
                 kalenderAusgabe(appointmentsPtr, selectedDayOfWeek, countAppointments);
