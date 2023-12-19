@@ -527,11 +527,12 @@ int main(void) {
             case 6: {
                 //Kalenderausgabe
                 toScan(&mins1,&hours1,&day1,&month1,&years1,&datumInput);
-                int testDay[] = {years1, month1, day1, hours1, mins1};
+                int testDay[] = {years1+1900, month1, day1, hours1, mins1,0};
 
-                printf("%d-%d-%d %d:%d\n",testDay[0],testDay[1],testDay[2],testDay[3],testDay[4]);
+                //printf("%d-%d-%d %d:%d\n",testDay[0],testDay[1],testDay[2],testDay[3],testDay[4]);
 
                 long long int testDayUnix = toUnixtime(testDay);
+                //printf("Unix: %lld\n", testDayUnix);
                 struct tm selectedDayOfWeek = *localtime(&testDayUnix);
                 kalenderAusgabe(appointmentsPtr, selectedDayOfWeek, countAppointments);
             }break;
