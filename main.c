@@ -460,9 +460,9 @@ int main(void) {
                 startDate.tm_yday = 0;
                 startDate.tm_isdst = 0;
 
-                //toScan(&mins1,&hours1,&day1,&month1,&years1,&datumInput);
+                toScan(&mins1,&hours1,&day1,&month1,&years1,&datumInput);
 
-                //startDate = datumInput;
+                startDate = datumInput;
 
                 char title[20] = "";
                 getTitel(title);
